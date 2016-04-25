@@ -1,0 +1,10 @@
+{
+	"name": "taco-bot",
+	"description": "A DiscordApp message bot.",
+	"version": "1.0.0",
+	"main": "index.js",
+	"dependencies": {
+		 "discord.js": "^7.0.1",
+		 "moment": "^2.13.0"
+	}
+}
