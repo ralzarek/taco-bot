@@ -44,9 +44,11 @@ MessageStore.prototype.store = function(message) {
 	} else if(message.mentions) {
 		message.mentions.forEach(function(user) {
 			if(self.users.indexOf(user.id) >= 0) {
-				var perms = message.channel.permissionsOf(user);
-				if(perms.hasPermission('readMessages')) {
-					appendMessage(user.id, message.timestamp, message.author.username, message.content);
+				if(message.channel && message.channel.permissionsOf) {
+					var perms = message.channel.permissionsOf(user);
+					if(perms.hasPermission('readMessages')) {
+						appendMessage(user.id, message.timestamp, message.author.username, message.content);
+					}
 				}
 			}
 		});
