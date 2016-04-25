@@ -4,7 +4,7 @@ var fs     = require('fs'),
 var MessageStore = function() {
 	var self = this;
 	self.users = [];
-	fs.readFile('data/.users', 'utf-8', function(err, data) {
+	fs.readFile('../data/.users', 'utf-8', function(err, data) {
 		if(data) {
 			self.users = JSON.parse(data);
 		}
