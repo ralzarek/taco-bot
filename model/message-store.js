@@ -61,7 +61,7 @@ MessageStore.prototype.retrieve = function(userid, callback) {
 		fs.readFile('../data/' + userid, 'utf-8', function(err, data) {
 			if(!err && data && data.length > 0) {
 				callback('I have seen the following messages:\n' + data, function() {
-					fs.truncate('data/' + userid, 0);
+					fs.truncate('../data/' + userid, 0);
 				});
 			} else {
 				callback('Sorry! No new messages.');
