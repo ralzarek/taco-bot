@@ -8,26 +8,33 @@ var fs             = require('fs'),
 var client = new Discord.Client();
 var messages = new MessageStore();
 var announcer = new VoiceAnnouncer(client, config.ttsKey);
+var ready = false;
 
 client.on('voiceJoin', function(channel, user) {
-	if(user.name === 'Ral') {
+	if(ready && user.id != client.user.id) {
 		announcer.joined(channel, user);
 	}
 });
 
+client.on('voiceLeave', function(channel, user) {
+	if(ready && user.id != client.user.id) {
+		announcer.left(channel, user);
+	}
+});
+
 client.on('message', function(m) {
-	if(m.content.startsWith("!taco what")) {
+	if(m.content.startsWith('!taco what')) {
 		log('Announcing', m.author);
 		staticContent(m.channel,'static/announce.md');
-	} else if(m.content.startsWith("!taco help")) {
+	} else if(m.content.startsWith('!taco help')) {
 		log('Helping', m.author);
 		staticContent(m.author,'static/help.md');
-	} else if(m.content.startsWith("!taco on")) {
+	} else if(m.content.startsWith('!taco on')) {
 		log('On', m.author);
 		messages.on(m.author, function() {
 			client.sendMessage(m.author, 'I am recording messages that mention you.');
 		});
-	} else if(m.content.startsWith("!taco off")) {
+	} else if(m.content.startsWith('!taco off')) {
 		log('Off', m.author);
 		messages.off(m.author, function() {
 			client.sendMessage(m.author, 'I am not recording messages that mention you.');
@@ -37,6 +44,8 @@ client.on('message', function(m) {
 		messages.retrieve(m.author.id, function(messages, callback) {
 			client.sendMessage(m.author, messages, callback);
 		});
+	} else if(m.content.startsWith('!taco')) {
+		staticContent(m.channel,'static/unknown.md');
 	} else {
 		messages.store(m);
 	}
@@ -44,6 +53,7 @@ client.on('message', function(m) {
 
 client.on('disconnected', function () {
     log('Reconnecting');
+    ready = false;
     connect();
 });
 
@@ -69,6 +79,9 @@ var log = function(info, user) {
 var connect = function() {
 	client.loginWithToken(config.token, function() {
 		log('Connected');
+		setTimeout(function() {
+			ready = true;
+		}, 1000);
 	});
 };
 

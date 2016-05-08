@@ -24,7 +24,17 @@ VoiceAnnouncer.prototype.joined = function(channel, user) {
 };
 
 VoiceAnnouncer.prototype.left = function(channel, user) {
-	
+	var self = this;
+	var path = '../data/sounds/' + user.id + '.left.wav';
+	fs.exists(path, function(exists) {
+		if(!exists) {
+			self.createTTSFile(filterName(user.name) + ' has left.', path, function() {
+				self.queue.push({'channel': channel, 'path': path});
+			});
+		} else {
+			self.queue.push({'channel': channel, 'path': path});
+		}
+	});
 };
 
 VoiceAnnouncer.prototype.play = function(item) {
@@ -32,16 +42,14 @@ VoiceAnnouncer.prototype.play = function(item) {
 	self.client.joinVoiceChannel(item.channel, function(e, vc) {
 		var stream = fs.createReadStream(item.path);
 		vc.playStream(stream).on('end', function() {
-			self.client.leaveVoiceChannel(item.channel, function() {
-				if(self.queue.length > 0) {
-					self.play(self.queue.shift());
-				} else {
+			if(self.queue.length > 0) {
+				self.play(self.queue.shift());
+			} else {
+				self.client.leaveVoiceChannel(item.channel, function() {
 					self.playing = false;
-					setTimeout(function() {
-						pulse(self);
-					}, 10);
-				}
-			});
+					pulse(self);
+				});
+			}
 		});
 	});
 };
@@ -51,7 +59,7 @@ VoiceAnnouncer.prototype.createTTSFile = function(message, path, callback) {
 	url += this.ttsKey;
 	url += '&src=';
 	url += message;
-	url += '&hl=en-us&c=wav';
+	url += '&hl=en-us&c=wav&f=44khz_16bit_stereo';
 	var stream = request.get(url).pipe(fs.createWriteStream(path));
 	stream.on('finish', callback);
 };
@@ -69,6 +77,7 @@ var pulse = function(self) {
 };
 
 var filterName = function(name) {
+	name = name.replace(/:.*:/, '');
 	return name;
 };
 
