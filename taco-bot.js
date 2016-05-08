@@ -7,7 +7,7 @@ var fs             = require('fs'),
 
 var client = new Discord.Client();
 var messages = new MessageStore();
-var announcer = new VoiceAnnouncer(client);
+var announcer = new VoiceAnnouncer(client, config.ttsKey);
 
 client.on('voiceJoin', function(channel, user) {
 	if(user.name === 'Ral') {
