@@ -7,7 +7,7 @@ var fs             = require('fs'),
 
 var client = new Discord.Client();
 var messages = new MessageStore();
-var announcer = new VoiceAnnouncer(client, config.ttsKey);
+var announcer = new VoiceAnnouncer(client, config);
 var ready = false;
 
 client.on('voiceJoin', function(channel, user) {
@@ -24,10 +24,10 @@ client.on('voiceLeave', function(channel, user) {
 
 client.on('message', function(m) {
 	if(m.content.startsWith('!taco what')) {
-		log('Announcing', m.author);
+		log('What', m.author);
 		staticContent(m.channel,'static/announce.md');
 	} else if(m.content.startsWith('!taco help')) {
-		log('Helping', m.author);
+		log('Help', m.author);
 		staticContent(m.author,'static/help.md');
 	} else if(m.content.startsWith('!taco on')) {
 		log('On', m.author);
@@ -40,11 +40,30 @@ client.on('message', function(m) {
 			client.sendMessage(m.author, 'I am not recording messages that mention you.');
 		});
 	} else if(m.content.startsWith('!taco me')) {
-		log('Retrieving', m.author);
+		log('Retrieve', m.author);
 		messages.retrieve(m.author.id, function(messages, callback) {
 			client.sendMessage(m.author, messages, callback);
 		});
+	} else if(m.content.startsWith('!taco voice on')) {
+		log('Voice on', m.author);
+		if(m.channel instanceof Discord.ServerChannel) {
+			announcer.on(m, function(result) {
+				client.sendMessage(m.channel, result);
+			});
+		} else {
+			client.sendMessage(m.channel, 'You can\'t do that in a PM!');
+		}
+	} else if(m.content.startsWith('!taco voice off')) {
+		log('Voice off', m.author);
+		if(m.channel instanceof Discord.ServerChannel) {
+			announcer.off(m, function(result) {
+				client.sendMessage(m.channel, result);
+			});
+		} else {
+			client.sendMessage(m.channel, 'You can\'t do that in a PM!');
+		}
 	} else if(m.content.startsWith('!taco')) {
+		log('Unkown', m.author);
 		staticContent(m.channel,'static/unknown.md');
 	} else {
 		messages.store(m);
