@@ -1,11 +1,19 @@
-var fs           = require('fs'),
-    moment       = require('moment'),
-    Discord      = require('discord.js'),
-    MessageStore = require('./model/message-store.js')
-    config       = require('./config.json');
+var fs             = require('fs'),
+    moment         = require('moment'),
+    Discord        = require('discord.js'),
+    MessageStore   = require('./model/message-store.js'),
+    VoiceAnnouncer = require('./model/voice-announcer.js'),
+    config         = require('./config.json');
 
 var client = new Discord.Client();
 var messages = new MessageStore();
+var announcer = new VoiceAnnouncer(client);
+
+client.on('voiceJoin', function(channel, user) {
+	if(user.name === 'Ral') {
+		announcer.joined(channel, user);
+	}
+});
 
 client.on('message', function(m) {
 	if(m.content.startsWith("!taco what")) {
