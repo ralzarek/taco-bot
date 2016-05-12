@@ -50,6 +50,7 @@ VoiceAnnouncer.prototype.off = function(message, callback) {
 };
 
 VoiceAnnouncer.prototype.joined = function(channel, user) {
+	if(channel.members.length < 1) return;
 	var self = this;
 	if(self.servers.indexOf(channel.server.id) >= 0) {
 		var path = '../data/voice/' + user.id + '.joined.wav';
@@ -66,6 +67,7 @@ VoiceAnnouncer.prototype.joined = function(channel, user) {
 };
 
 VoiceAnnouncer.prototype.left = function(channel, user) {
+	if(channel.members.length < 1) return;
 	var self = this;
 	if(self.servers.indexOf(channel.server.id) >= 0) {
 		var path = '../data/voice/' + user.id + '.left.wav';
