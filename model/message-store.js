@@ -4,7 +4,7 @@ var fs     = require('fs'),
 var MessageStore = function() {
 	var self = this;
 	self.users = [];
-	fs.readFile('../data/.users', 'utf-8', function(err, data) {
+	fs.readFile('../data/messages/.users', 'utf-8', function(err, data) {
 		if(data) {
 			self.users = JSON.parse(data);
 		}
@@ -14,7 +14,7 @@ var MessageStore = function() {
 MessageStore.prototype.on = function(user, callback) {
 	if(this.users.indexOf(user.id) < 0) {
 		this.users.push(user.id);
-		fs.writeFile('../data/.users', JSON.stringify(this.users, null, 2), callback);
+		fs.writeFile('../data/messages/.users', JSON.stringify(this.users, null, 2), callback);
 	} else {
 		callback();
 	}
@@ -24,7 +24,7 @@ MessageStore.prototype.off = function(user, callback) {
 	var index = this.users.indexOf(user.id);
 	if (index !== -1) {
 		this.users.splice(index, 1);
-		fs.writeFile('../data/.users', JSON.stringify(this.users, null, 2), callback);
+		fs.writeFile('../data/messages/.users', JSON.stringify(this.users, null, 2), callback);
 	} else {
 		callback();
 	}
@@ -58,10 +58,10 @@ MessageStore.prototype.store = function(message) {
 MessageStore.prototype.retrieve = function(userid, callback) {
 	var self = this;
 	if(self.users.indexOf(userid) >= 0) {
-		fs.readFile('../data/' + userid, 'utf-8', function(err, data) {
+		fs.readFile('../data/messages/' + userid, 'utf-8', function(err, data) {
 			if(!err && data && data.length > 0) {
 				callback('I have seen the following messages:\n' + data, function() {
-					fs.truncate('../data/' + userid, 0);
+					fs.truncate('../data/messages/' + userid, 0);
 				});
 			} else {
 				callback('Sorry! No new messages.');
@@ -74,7 +74,7 @@ MessageStore.prototype.retrieve = function(userid, callback) {
 
 var appendMessage = function(userid, timestamp, author, content) {
 	var message = moment(timestamp).format('MMMM Do, h:mm:ss a') + ' > ' + author + ' said ' + content + '\n';
-	fs.appendFile('../data/' + userid, message);
+	fs.appendFile('../data/messages/' + userid, message);
 };
 
 module.exports = MessageStore;

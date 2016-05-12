@@ -1,34 +1,70 @@
-var fs           = require('fs'),
-    moment       = require('moment'),
-    Discord      = require('discord.js'),
-    MessageStore = require('./model/message-store.js')
-    config       = require('./config.json');
+var fs             = require('fs'),
+    moment         = require('moment'),
+    Discord        = require('discord.js'),
+    MessageStore   = require('./model/message-store.js'),
+    VoiceAnnouncer = require('./model/voice-announcer.js'),
+    config         = require('./config.json');
 
 var client = new Discord.Client();
 var messages = new MessageStore();
+var announcer = new VoiceAnnouncer(client, config);
+var ready = false;
+
+client.on('voiceJoin', function(channel, user) {
+	if(ready && user.id != client.user.id) {
+		announcer.joined(channel, user);
+	}
+});
+
+client.on('voiceLeave', function(channel, user) {
+	if(ready && user.id != client.user.id) {
+		announcer.left(channel, user);
+	}
+});
 
 client.on('message', function(m) {
-	if(m.content.startsWith("!taco what")) {
-		log('Announcing', m.author);
+	if(m.content.startsWith('!taco what')) {
+		log('What', m.author);
 		staticContent(m.channel,'static/announce.md');
-	} else if(m.content.startsWith("!taco help")) {
-		log('Helping', m.author);
+	} else if(m.content.startsWith('!taco help')) {
+		log('Help', m.author);
 		staticContent(m.author,'static/help.md');
-	} else if(m.content.startsWith("!taco on")) {
+	} else if(m.content.startsWith('!taco on')) {
 		log('On', m.author);
 		messages.on(m.author, function() {
 			client.sendMessage(m.author, 'I am recording messages that mention you.');
 		});
-	} else if(m.content.startsWith("!taco off")) {
+	} else if(m.content.startsWith('!taco off')) {
 		log('Off', m.author);
 		messages.off(m.author, function() {
 			client.sendMessage(m.author, 'I am not recording messages that mention you.');
 		});
 	} else if(m.content.startsWith('!taco me')) {
-		log('Retrieving', m.author);
+		log('Retrieve', m.author);
 		messages.retrieve(m.author.id, function(messages, callback) {
 			client.sendMessage(m.author, messages, callback);
 		});
+	} else if(m.content.startsWith('!taco voice on')) {
+		log('Voice on', m.author);
+		if(m.channel instanceof Discord.ServerChannel) {
+			announcer.on(m, function(result) {
+				client.sendMessage(m.channel, result);
+			});
+		} else {
+			client.sendMessage(m.channel, 'You can\'t do that in a PM!');
+		}
+	} else if(m.content.startsWith('!taco voice off')) {
+		log('Voice off', m.author);
+		if(m.channel instanceof Discord.ServerChannel) {
+			announcer.off(m, function(result) {
+				client.sendMessage(m.channel, result);
+			});
+		} else {
+			client.sendMessage(m.channel, 'You can\'t do that in a PM!');
+		}
+	} else if(m.content.startsWith('!taco')) {
+		log('Unkown', m.author);
+		staticContent(m.channel,'static/unknown.md');
 	} else {
 		messages.store(m);
 	}
@@ -36,6 +72,7 @@ client.on('message', function(m) {
 
 client.on('disconnected', function () {
     log('Reconnecting');
+    ready = false;
     connect();
 });
 
@@ -61,6 +98,9 @@ var log = function(info, user) {
 var connect = function() {
 	client.loginWithToken(config.token, function() {
 		log('Connected');
+		setTimeout(function() {
+			ready = true;
+		}, 1000);
 	});
 };
 
