@@ -12,7 +12,7 @@ var VoiceAnnouncer = function(client, config) {
 		}
 	});
 	self.queue = new Array();
-	self.playing = false;	
+	self.playing = false;
 	pulse(self);
 };
 
@@ -104,7 +104,7 @@ VoiceAnnouncer.prototype.createTTSFile = function(message, path, callback) {
 	url += '&src=';
 	url += message;
 	url += '&hl=en-us&c=wav&f=44khz_16bit_stereo';
-	var req = request.get(url);
+	var req = request.get(url, {'timeout': 3000});
 	req.on('response', function(resp) {
 		if(resp.statusCode === 200) {
 			var stream = req.pipe(fs.createWriteStream(path));
