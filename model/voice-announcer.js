@@ -94,6 +94,8 @@ VoiceAnnouncer.prototype.play = function(item) {
 					pulse(self);
 				});
 			}
+		}).on('error', function(e) {
+			console.log(e);
 		});
 	});
 };
