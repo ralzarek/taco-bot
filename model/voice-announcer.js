@@ -85,6 +85,9 @@ VoiceAnnouncer.prototype.play = function(item) {
 	var self = this;
 	self.client.joinVoiceChannel(item.channel, function(e, vc) {
 		var stream = fs.createReadStream(item.path);
+		vc.on('error', function(e) {
+			console.log(e);
+		});
 		vc.playStream(stream).on('end', function() {
 			if(self.queue.length > 0) {
 				self.play(self.queue.shift());
