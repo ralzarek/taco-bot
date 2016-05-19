@@ -119,6 +119,8 @@ VoiceAnnouncer.prototype.createTTSFile = function(message, path, callback) {
 		} else {
 			console.log('tts failed on ' + message);
 		}
+	}).on('error', function(err) {
+		console.log(err);
 	});
 };
 
