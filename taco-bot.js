@@ -11,17 +11,17 @@ var messages = new MessageStore();
 var announcer = new VoiceAnnouncer(client, config);
 var ready = false;
 
-// client.on('voiceJoin', function(channel, user) {
-// 	if(ready && user.id != client.user.id) {
-// 		announcer.joined(channel, user);
-// 	}
-// });
+client.on('voiceJoin', function(channel, user) {
+	if(ready && user.id != client.user.id) {
+		announcer.joined(channel, user);
+	}
+});
 
-// client.on('voiceLeave', function(channel, user) {
-// 	if(ready && user.id != client.user.id) {
-// 		announcer.left(channel, user);
-// 	}
-// });
+client.on('voiceLeave', function(channel, user) {
+	if(ready && user.id != client.user.id) {
+		announcer.left(channel, user);
+	}
+});
 
 client.on('message', function(m) {
 	if(m.author.id == client.user.id) {
