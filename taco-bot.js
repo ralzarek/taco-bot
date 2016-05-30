@@ -95,7 +95,7 @@ client.on('message', function(m) {
 		log('PM ' + m.content, m.author);
 		config.su.forEach(function(id) {
 			if(id != m.author.id) {
-				client.sendMessage(id, m.author.name + ' says '  m.content);
+				client.sendMessage(id, m.author.name + ' says ' + m.content);
 			}
 		});
 	} else {
