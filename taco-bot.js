@@ -11,19 +11,22 @@ var messages = new MessageStore();
 var announcer = new VoiceAnnouncer(client, config);
 var ready = false;
 
-client.on('voiceJoin', function(channel, user) {
-	if(ready && user.id != client.user.id) {
-		announcer.joined(channel, user);
-	}
-});
+// client.on('voiceJoin', function(channel, user) {
+// 	if(ready && user.id != client.user.id) {
+// 		announcer.joined(channel, user);
+// 	}
+// });
 
-client.on('voiceLeave', function(channel, user) {
-	if(ready && user.id != client.user.id) {
-		announcer.left(channel, user);
-	}
-});
+// client.on('voiceLeave', function(channel, user) {
+// 	if(ready && user.id != client.user.id) {
+// 		announcer.left(channel, user);
+// 	}
+// });
 
 client.on('message', function(m) {
+	if(m.author.id == client.user.id) {
+		return;
+	}
 	if(m.content.startsWith('!taco what')) {
 		log('What', m.author);
 		staticContent(m.channel,'static/announce.md');
@@ -63,28 +66,34 @@ client.on('message', function(m) {
 		} else {
 			client.sendMessage(m.channel, 'You can\'t do that in a PM!');
 		}
-	} else if(m.content.startsWith('!taco say')) {
+	} else if(m.content.startsWith('!taco sayto')) {
 		if(config.su.indexOf(m.author.id) !== -1) {
 			log(m.content, m.author);
-			var content = m.content.replace('!taco say ', '');
-			var channel = null;
-			if(content.startsWith('to')) {
-				content = content.substr(content.indexOf(' ') + 1);
-				var name = content.split(' ')[0];
-				content = content.substr(content.indexOf(' ') + 1);
-				channel = findUser(name);
-			} else if(content.startsWith('in')) {
-				content = content.substr(content.indexOf(' ') + 1);
-				var name = content.split(' ')[0];
-				content = content.substr(content.indexOf(' ') + 1);
-				channel = findChannel(name);
-			} else {
-				channel = m.channel;
-			}
+			var content = m.content.replace('!taco sayto ', '');
+			var name = content.split(' ')[0];
+			content = content.substr(content.indexOf(' ') + 1);
+			var channel = findUser(name);
 			if(channel != null) {
 				client.sendMessage(channel, content);
+				client.sendMessage(m.channel, 'Done!');
 			} else {
 				client.sendMessage(m.channel, 'I couldn\'t figure out where you wanted me to say that!');	
+			}
+		} else {
+			client.sendMessage(m.channel, 'You don\'t have permission to do that!');
+		}
+	} else if(m.content.startsWith('!taco sayin')) {
+		if(config.su.indexOf(m.author.id) !== -1) {
+			log(m.content, m.author);
+			var content = m.content.replace('!taco sayto ', '');
+			var name = content.split(' ')[0];
+			content = content.substr(content.indexOf(' ') + 1);
+			var channel = findChannel(name);
+			if(channel != null) {
+				client.sendMessage(channel, content);
+				client.sendMessage(m.channel, 'Done!');
+			} else {
+				client.sendMessage(m.channel, 'I couldn\'t figure out where you wanted me to say that!');
 			}
 		} else {
 			client.sendMessage(m.channel, 'You don\'t have permission to do that!');
