@@ -91,10 +91,12 @@ client.on('message', function(m) {
 	} else if(m.content.startsWith('!taco')) {
 		log('Unkown', m.author);
 		staticContent(m.channel,'static/unknown.md');
-	} else if(m.channel instanceof Discord.PMChannel && m.author.id != client.user.id && config.su.indexOf(m.author.id) == -1) {
+	} else if(m.channel instanceof Discord.PMChannel && m.author.id != client.user.id) {
 		log('PM ' + m.content, m.author);
 		config.su.forEach(function(id) {
-			client.sendMessage(id, m.author.name + ' says ' + m.content);
+			if(id != m.author.id) {
+				client.sendMessage(id, m.author.name + ' says '  m.content);
+			}
 		});
 	} else {
 		messages.store(m);
