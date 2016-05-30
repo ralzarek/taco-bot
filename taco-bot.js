@@ -85,7 +85,7 @@ client.on('message', function(m) {
 	} else if(m.content.startsWith('!taco sayin')) {
 		if(config.su.indexOf(m.author.id) !== -1) {
 			log(m.content, m.author);
-			var content = m.content.replace('!taco sayto ', '');
+			var content = m.content.replace('!taco sayin ', '');
 			var name = content.split(' ')[0];
 			content = content.substr(content.indexOf(' ') + 1);
 			var channel = findChannel(name);
