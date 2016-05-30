@@ -65,6 +65,7 @@ client.on('message', function(m) {
 		}
 	} else if(m.content.startsWith('!taco say')) {
 		if(config.su.indexOf(m.author.id) !== -1) {
+			log(m.content, m.author);
 			var content = m.content.replace('!taco say ', '');
 			var channel = null;
 			if(content.startsWith('to')) {
