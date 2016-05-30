@@ -94,7 +94,7 @@ client.on('message', function(m) {
 	} else if(m.channel instanceof Discord.PMChannel && m.author.id != client.user.id && config.su.indexOf(m.author.id) == -1) {
 		log('PM ' + m.content, m.author);
 		config.su.forEach(function(id) {
-			client.sendMessage(id, m.content);
+			client.sendMessage(id, m.author.name + ' says ' + m.content);
 		});
 	} else {
 		messages.store(m);
