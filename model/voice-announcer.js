@@ -117,6 +117,9 @@ VoiceAnnouncer.prototype.createTTSFile = function(message, path, callback) {
 		if(resp.statusCode === 200) {
 			var stream = req.pipe(fs.createWriteStream(path));
 			stream.on('finish', callback);
+			stream.on('error', function(err) {
+				console.log(err);
+			});
 		} else {
 			console.log('tts failed on ' + message);
 		}
