@@ -151,7 +151,7 @@ var findUser = function(name) {
 	var result = null;
 	name = name.toLowerCase();
 	client.users.forEach(function(user) {
-		if(utils.filterName(user.name).toLowerCase().startsWith(name)) {
+		if(user.name && utils.filterName(user.name).toLowerCase().startsWith(name)) {
 			result = user;
 		}
 	});
@@ -162,7 +162,7 @@ var findChannel = function(name) {
 	var result = null;
 	name = name.toLowerCase();
 	client.channels.forEach(function(channel) {
-		if(channel.name.startsWith(name)) {
+		if(channel.name && channel.name.startsWith(name)) {
 			result = channel;
 		}
 	});
