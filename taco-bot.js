@@ -114,9 +114,11 @@ client.on('message', function(m) {
 });
 
 client.on('disconnected', function () {
-    log('Reconnecting');
+	log('Reconnecting');
     ready = false;
-    connect();
+    setTimeout(function() {
+    	connect();
+    }, 1000);
 });
 
 var staticContent = function(channel, asset) {
