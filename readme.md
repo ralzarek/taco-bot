@@ -11,3 +11,5 @@ Command | Description
 !taco on | The bot will start recording messages for the user.
 !taco off | The bot will stop recording messages for the user.
 !taco me | The bot will PM the user any recorded messages.
+!taco voice on | The bot will use tts to announce users that join and leave voice channels on your server. Must be said by a server owner in a channel on their server.
+!taco voice on | Disables tts voice announce. Must be said by a server owner in a channel on their server.

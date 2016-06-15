@@ -66,48 +66,11 @@ client.on('message', function(m) {
 		} else {
 			client.sendMessage(m.channel, 'You can\'t do that in a PM!');
 		}
-	} else if(m.content.startsWith('!taco sayto')) {
-		if(config.su.indexOf(m.author.id) !== -1) {
-			log(m.content, m.author);
-			var content = m.content.replace('!taco sayto ', '');
-			var name = content.split(' ')[0];
-			content = content.substr(content.indexOf(' ') + 1);
-			var channel = findUser(name);
-			if(channel != null) {
-				client.sendMessage(channel, content);
-				client.sendMessage(m.channel, 'Done!');
-			} else {
-				client.sendMessage(m.channel, 'I couldn\'t figure out where you wanted me to say that!');	
-			}
-		} else {
-			client.sendMessage(m.channel, 'You don\'t have permission to do that!');
-		}
-	} else if(m.content.startsWith('!taco sayin')) {
-		if(config.su.indexOf(m.author.id) !== -1) {
-			log(m.content, m.author);
-			var content = m.content.replace('!taco sayin ', '');
-			var name = content.split(' ')[0];
-			content = content.substr(content.indexOf(' ') + 1);
-			var channel = findChannel(name);
-			if(channel != null) {
-				client.sendMessage(channel, content);
-				client.sendMessage(m.channel, 'Done!');
-			} else {
-				client.sendMessage(m.channel, 'I couldn\'t figure out where you wanted me to say that!');
-			}
-		} else {
-			client.sendMessage(m.channel, 'You don\'t have permission to do that!');
-		}
 	} else if(m.content.startsWith('!taco')) {
 		log('Unkown', m.author);
 		staticContent(m.channel,'static/unknown.md');
-	} else if(m.channel instanceof Discord.PMChannel && m.author.id != client.user.id) {
+	} else if(m.channel instanceof Discord.PMChannel) {
 		log('PM ' + m.content, m.author);
-		config.su.forEach(function(id) {
-			if(id != m.author.id) {
-				client.sendMessage(id, m.author.name + ' says ' + m.content);
-			}
-		});
 	} else {
 		messages.store(m);
 	}
@@ -147,28 +110,6 @@ var connect = function() {
 			ready = true;
 		}, 1000);
 	});
-};
-
-var findUser = function(name) {
-	var result = null;
-	name = name.toLowerCase();
-	client.users.forEach(function(user) {
-		if(user.name && utils.filterName(user.name).toLowerCase().startsWith(name)) {
-			result = user;
-		}
-	});
-	return result;
-};
-
-var findChannel = function(name) {
-	var result = null;
-	name = name.toLowerCase();
-	client.channels.forEach(function(channel) {
-		if(channel.name && channel.name.startsWith(name)) {
-			result = channel;
-		}
-	});
-	return result;
 };
 
 connect();
