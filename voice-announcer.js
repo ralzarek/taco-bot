@@ -85,8 +85,6 @@ VoiceAnnouncer.prototype.left = function(channel, user) {
 VoiceAnnouncer.prototype.play = function(item) {
 	var self = this;
 	self.client.joinVoiceChannel(item.channel, function(e, vc) {
-		if(item.channel.members.length < 1) return;
-
 		var stream = fs.createReadStream(item.path);
 		vc.on('error', function(e) {
 			console.log(e);
@@ -129,6 +127,7 @@ VoiceAnnouncer.prototype.createTTSFile = function(message, path, callback) {
 };
 
 VoiceAnnouncer.prototype.enqueue = function(item) {
+	if(item.channel.members.length < 1) return;
 	var existing = false;
 	for(var i = 0; i < this.queue.length; i++) {
 		if(item.userId === this.queue[i].userId && item.channel.id === this.queue[i].channel.id) {
