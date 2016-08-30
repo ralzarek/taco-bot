@@ -85,10 +85,6 @@ VoiceAnnouncer.prototype.left = function(channel, user) {
 VoiceAnnouncer.prototype.play = function(item) {
 	var self = this;
 	self.client.joinVoiceChannel(item.channel, function(e, vc) {
-		if(e) {
-			console.log(e);
-			return;
-		}
 		if(item.channel.members.length < 1) return;
 
 		var stream = fs.createReadStream(item.path);
