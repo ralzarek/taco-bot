@@ -32,6 +32,11 @@ client.on('message', function(m) {
 		return;
 	}
 
+	//ignore non-commands
+	if(!m.content.startsWith('!taco')) {
+		return;
+	}
+
 	//is the message author an admin?
 	var perms = m.channel.permissionsOf(m.author);
 	if(!(perms.hasPermission('manageServer') || config.su.indexOf(m.author.id) !== -1)) {
