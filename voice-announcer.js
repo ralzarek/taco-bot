@@ -128,14 +128,17 @@ VoiceAnnouncer.prototype.createTTSFile = function(message, path, callback) {
 
 VoiceAnnouncer.prototype.enqueue = function(item) {
 	if(item.channel.members.length < 1) return;
-	var existing = false;
+	var index = -1;
 	for(var i = 0; i < this.queue.length; i++) {
 		if(item.userId === this.queue[i].userId && item.channel.id === this.queue[i].channel.id) {
-			existing = true;
+			index = i;
 			break;
 		}
 	}
-	if(existing) return;
+	if(index >= 0) {
+		this.queue.splice(index, 1);
+		return;
+	}
 	this.queue.push(item);
 };
 
