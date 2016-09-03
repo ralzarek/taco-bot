@@ -52,6 +52,7 @@ VoiceAnnouncer.prototype.joined = function(channel, user) {
 	if(channel.members.length < 1 || this.servers.indexOf(channel.server.id) < 0) return;
 
 	var name = filterName(user.name);
+	if(!name) return;
 	var path = '../data/voice/' + name + '.joined.wav';
 	var self = this;
 	fs.exists(path, function(exists) {
@@ -69,6 +70,7 @@ VoiceAnnouncer.prototype.left = function(channel, user) {
 	if(channel.members.length < 1 || this.servers.indexOf(channel.server.id) < 0) return;
 
 	var name = filterName(user.name);
+	if(!name) return;
 	var path = '../data/voice/' + name + '.left.wav';
 	var self = this;
 	fs.exists(path, function(exists) {
@@ -154,7 +156,7 @@ var pulse = function(self) {
 	}
 };
 
-filterName = function(name) {
+var filterName = function(name) {
 	name = name.replace(/[^\x00-\xFF]/g, '');
 	name = name.replace(/[\\]/g, '');
 	return name.latinize();
