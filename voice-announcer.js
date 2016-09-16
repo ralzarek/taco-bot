@@ -68,7 +68,7 @@ VoiceAnnouncer.prototype.joined = function(channel, user) {
 VoiceAnnouncer.prototype.left = function(channel, user) {
 	if(!channel || !user || !user.name || !channel.members || !channel.server || channel.members.length < 1 || this.servers.indexOf(channel.server.id) < 0) return;
 
-	var name = filterName(user.name);de
+	var name = filterName(user.name);
 	var path = '../data/voice/' + name + '.left.wav';
 	var self = this;
 	fs.exists(path, function(exists) {
